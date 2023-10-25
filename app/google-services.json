@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "912521350020",
+    "firebase_url": "https://fetalcare-c6cd5-default-rtdb.firebaseio.com",
+    "project_id": "fetalcare-c6cd5",
+    "storage_bucket": "fetalcare-c6cd5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912521350020:android:fcfe7a36ce36b6a121ebd1",
+        "android_client_info": {
+          "package_name": "com.ejemplo.fetalcare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912521350020-830nbnti8ve8a7la3lnusk9iiq7dl1pv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXSetUNly-nLZW9da9gAXinvwJ248y1G0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912521350020-830nbnti8ve8a7la3lnusk9iiq7dl1pv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

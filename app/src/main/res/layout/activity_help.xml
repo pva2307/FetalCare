@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/morado5"
+    tools:context=".HelpActivity">
+
+    <RelativeLayout
+        android:id="@+id/layout_help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/back_btn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/baseline_keyboard_backspace_24" />
+
+        <TextView
+            android:id="@+id/text_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/back_btn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="¿Cómo usar el dispositivo?"
+            android:textColor="@color/white"
+            android:textSize="27sp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/text_ayuda"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_help"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins"
+        android:text="Si tiene problemas para usar el dispositivo, siga los siguientes pasos:"
+        android:textColor="@color/white"
+        android:textSize="19sp" />
+
+    <ImageView
+        android:id="@+id/one"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_ayuda"
+        app:layout_constraintEnd_toStartOf="@id/text_paso1"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="25dp"
+        android:src="@drawable/baseline_looks_one_24"/>
+
+    <TextView
+        android:id="@+id/text_paso1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/text_ayuda"
+        app:layout_constraintStart_toEndOf="@id/one"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins"
+        android:text="Revisa si el telefono esta conectado al dispositivo via Bluetooth."
+        android:textColor="@color/white"
+        android:textSize="19sp" />
+
+    <ImageView
+        android:id="@+id/two"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_paso1"
+        app:layout_constraintEnd_toStartOf="@id/text_paso2"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="25dp"
+        android:src="@drawable/baseline_looks_two_24"/>
+
+    <TextView
+        android:id="@+id/text_paso2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/text_paso1"
+        app:layout_constraintStart_toEndOf="@id/two"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins"
+        android:text="Haz click en el boton de Bluetooth y espera que el resultado sea 'Conexion exitosa'."
+        android:textColor="@color/white"
+        android:textSize="19sp" />
+
+    <ImageView
+        android:id="@+id/three"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_paso2"
+        app:layout_constraintEnd_toStartOf="@id/text_paso3"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="25dp"
+        android:src="@drawable/baseline_looks_3_24"/>
+
+    <TextView
+        android:id="@+id/text_paso3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/text_paso2"
+        app:layout_constraintStart_toEndOf="@id/three"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins"
+        android:text="Haz click en el botón de Inicio si el paso anterior fue exitoso."
+        android:textColor="@color/white"
+        android:textSize="19sp" />
+
+    <ImageView
+        android:id="@+id/four"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_paso3"
+        app:layout_constraintEnd_toStartOf="@id/text_paso4"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="25dp"
+        android:src="@drawable/baseline_looks_4_24"/>
+
+    <TextView
+        android:id="@+id/text_paso4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/text_paso3"
+        app:layout_constraintStart_toEndOf="@id/three"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="@font/poppins"
+        android:text="Si no esta obteniendo resultados, asegúrese de posicionar el sensor en el foco fetal y no presione demasiado."
+        android:textColor="@color/white"
+        android:textSize="19sp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

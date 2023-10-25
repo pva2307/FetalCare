@@ -1,0 +1,287 @@
+<html>
+<head>
+<title>DeviceActivity.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #9b2393; font-weight: bold;}
+.s1 { color: #000000;}
+.s2 { color: #c41a16;}
+.s3 { color: #5d6c79;}
+.s4 { color: #1c00cf;}
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+DeviceActivity.kt</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">package </span>com.ejemplo.fetalcare
+<a name="l2"><span class="ln">2    </span></a>
+<a name="l3"><span class="ln">3    </span></a>import android.Manifest
+<a name="l4"><span class="ln">4    </span></a>import android.annotation.SuppressLint
+<a name="l5"><span class="ln">5    </span></a>import android.bluetooth.BluetoothAdapter
+<a name="l6"><span class="ln">6    </span></a>import android.bluetooth.BluetoothDevice
+<a name="l7"><span class="ln">7    </span></a>import android.bluetooth.BluetoothGatt
+<a name="l8"><span class="ln">8    </span></a>import android.bluetooth.BluetoothGattCallback
+<a name="l9"><span class="ln">9    </span></a>import android.bluetooth.BluetoothProfile
+<a name="l10"><span class="ln">10   </span></a>import android.content.BroadcastReceiver
+<a name="l11"><span class="ln">11   </span></a>import android.content.Context
+<a name="l12"><span class="ln">12   </span></a>import android.content.Intent
+<a name="l13"><span class="ln">13   </span></a>import android.content.IntentFilter
+<a name="l14"><span class="ln">14   </span></a>import android.content.pm.PackageManager
+<a name="l15"><span class="ln">15   </span></a>import androidx.appcompat.app.AppCompatActivity
+<a name="l16"><span class="ln">16   </span></a>import android.os.Bundle
+<a name="l17"><span class="ln">17   </span></a>import android.util.Log
+<a name="l18"><span class="ln">18   </span></a>import android.view.View.GONE
+<a name="l19"><span class="ln">19   </span></a>import android.view.View.VISIBLE
+<a name="l20"><span class="ln">20   </span></a>import android.widget.Button
+<a name="l21"><span class="ln">21   </span></a>import android.widget.Toast
+<a name="l22"><span class="ln">22   </span></a>import androidx.core.app.ActivityCompat
+<a name="l23"><span class="ln">23   </span></a>import androidx.core.content.ContextCompat
+<a name="l24"><span class="ln">24   </span></a>import com.ejemplo.fetalcare.databinding.ActivityDeviceBinding
+<a name="l25"><span class="ln">25   </span></a>import java.io.IOException
+<a name="l26"><span class="ln">26   </span></a>import java.util.UUID
+<a name="l27"><span class="ln">27   </span></a>import kotlin.properties.Delegates
+<a name="l28"><span class="ln">28   </span></a>
+<a name="l29"><span class="ln">29   </span></a><span class="s0">class </span>DeviceActivity : AppCompatActivity() {
+<a name="l30"><span class="ln">30   </span></a>
+<a name="l31"><span class="ln">31   </span></a>    lateinit <span class="s0">var </span>binding: ActivityDeviceBinding
+<a name="l32"><span class="ln">32   </span></a>    private lateinit <span class="s0">var </span>bluetoothAdapter: BluetoothAdapter
+<a name="l33"><span class="ln">33   </span></a>    private <span class="s0">val </span>adapter: BluetoothAdapter? by lazy { BluetoothAdapter.getDefaultAdapter() }
+<a name="l34"><span class="ln">34   </span></a>    private <span class="s0">var </span>bluetoothGatt: BluetoothGatt? = <span class="s0">null</span>
+<a name="l35"><span class="ln">35   </span></a>    private <span class="s0">val </span>targetDeviceAddress = <span class="s2">&quot;C4:DD:57:EB:26:AA&quot;</span>
+<a name="l36"><span class="ln">36   </span></a>    private <span class="s0">var </span>isConnected = <span class="s0">false</span>
+<a name="l37"><span class="ln">37   </span></a>
+<a name="l38"><span class="ln">38   </span></a>    override <span class="s0">fun </span>onCreate(savedInstanceState: Bundle?) {
+<a name="l39"><span class="ln">39   </span></a>        <span class="s0">super</span>.onCreate(savedInstanceState)
+<a name="l40"><span class="ln">40   </span></a>
+<a name="l41"><span class="ln">41   </span></a>        binding = ActivityDeviceBinding.inflate(layoutInflater)
+<a name="l42"><span class="ln">42   </span></a>        setContentView(binding.root)
+<a name="l43"><span class="ln">43   </span></a>
+<a name="l44"><span class="ln">44   </span></a>        binding.backBtn.setOnClickListener {
+<a name="l45"><span class="ln">45   </span></a>            <span class="s0">val </span>mainIntent = Intent(<span class="s0">this</span>, MainActivity::<span class="s0">class</span>.java)
+<a name="l46"><span class="ln">46   </span></a>            startActivity(mainIntent)
+<a name="l47"><span class="ln">47   </span></a>            finish()
+<a name="l48"><span class="ln">48   </span></a>        }
+<a name="l49"><span class="ln">49   </span></a>
+<a name="l50"><span class="ln">50   </span></a>        checkBluetoothPermissions()
+<a name="l51"><span class="ln">51   </span></a>        isBluetoothNull()
+<a name="l52"><span class="ln">52   </span></a>        isBluetoothEnable()
+<a name="l53"><span class="ln">53   </span></a>        bluetoothBtn()
+<a name="l54"><span class="ln">54   </span></a>
+<a name="l55"><span class="ln">55   </span></a>        binding.bluetoothBtn.setOnClickListener {
+<a name="l56"><span class="ln">56   </span></a>            <span class="s0">if </span>(!isBluetoothEnable()) {
+<a name="l57"><span class="ln">57   </span></a>                enableBluetooth()
+<a name="l58"><span class="ln">58   </span></a>            } <span class="s0">else </span>{
+<a name="l59"><span class="ln">59   </span></a>                binding.bluetoothBtn.visibility = GONE
+<a name="l60"><span class="ln">60   </span></a>            }
+<a name="l61"><span class="ln">61   </span></a>        }
+<a name="l62"><span class="ln">62   </span></a>
+<a name="l63"><span class="ln">63   </span></a>        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+<a name="l64"><span class="ln">64   </span></a>        registerConnectionReceiver()
+<a name="l65"><span class="ln">65   </span></a>        checkConnectionStatus()
+<a name="l66"><span class="ln">66   </span></a>    }
+<a name="l67"><span class="ln">67   </span></a>
+<a name="l68"><span class="ln">68   </span></a>    private <span class="s0">fun </span>isBluetoothNull() {
+<a name="l69"><span class="ln">69   </span></a>        <span class="s0">val </span>bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+<a name="l70"><span class="ln">70   </span></a>        <span class="s0">if </span>(bluetoothAdapter == <span class="s0">null</span>) { <span class="s3">//no hay bluetooth</span>
+<a name="l71"><span class="ln">71   </span></a>            binding.availableBluetooth.text = <span class="s2">&quot;No disponible&quot;</span>
+<a name="l72"><span class="ln">72   </span></a>            binding.onBluetooth.visibility = GONE
+<a name="l73"><span class="ln">73   </span></a>        } <span class="s0">else </span>{
+<a name="l74"><span class="ln">74   </span></a>            binding.availableBluetooth.text = <span class="s2">&quot;Disponible&quot;</span>
+<a name="l75"><span class="ln">75   </span></a>            binding.onBluetooth.visibility = VISIBLE
+<a name="l76"><span class="ln">76   </span></a>        }
+<a name="l77"><span class="ln">77   </span></a>    }
+<a name="l78"><span class="ln">78   </span></a>
+<a name="l79"><span class="ln">79   </span></a>    private <span class="s0">fun </span>isBluetoothEnable(): Boolean {
+<a name="l80"><span class="ln">80   </span></a>        <span class="s0">val </span>bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+<a name="l81"><span class="ln">81   </span></a>        <span class="s0">return </span>bluetoothAdapter.isEnabled
+<a name="l82"><span class="ln">82   </span></a>    }
+<a name="l83"><span class="ln">83   </span></a>
+<a name="l84"><span class="ln">84   </span></a>    private <span class="s0">fun </span>bluetoothBtn() {
+<a name="l85"><span class="ln">85   </span></a>        <span class="s0">if </span>(isBluetoothEnable()) { <span class="s3">//esta encendido</span>
+<a name="l86"><span class="ln">86   </span></a>            binding.onBluetooth.text = <span class="s2">&quot;Encendido&quot;</span>
+<a name="l87"><span class="ln">87   </span></a>            binding.bluetoothBtn.visibility = GONE
+<a name="l88"><span class="ln">88   </span></a>            binding.layoutDeviceConnected.visibility = VISIBLE
+<a name="l89"><span class="ln">89   </span></a>        } <span class="s0">else </span>{
+<a name="l90"><span class="ln">90   </span></a>            binding.onBluetooth.text = <span class="s2">&quot;Apagado&quot;</span>
+<a name="l91"><span class="ln">91   </span></a>            binding.bluetoothBtn.visibility = VISIBLE
+<a name="l92"><span class="ln">92   </span></a>            binding.bluetoothBtn.text = <span class="s2">&quot;ON&quot;</span>
+<a name="l93"><span class="ln">93   </span></a>            binding.layoutDeviceConnected.visibility = GONE
+<a name="l94"><span class="ln">94   </span></a>        }
+<a name="l95"><span class="ln">95   </span></a>    }
+<a name="l96"><span class="ln">96   </span></a>
+<a name="l97"><span class="ln">97   </span></a>    private <span class="s0">val </span>bluetoothStateReceiver = <span class="s0">object </span>: BroadcastReceiver() {
+<a name="l98"><span class="ln">98   </span></a>        override <span class="s0">fun </span>onReceive(context: Context?, intent: Intent?) {
+<a name="l99"><span class="ln">99   </span></a>            <span class="s0">if </span>(intent?.action == BLUETOOTH_STATE_CHANGED_ACTION) {
+<a name="l100"><span class="ln">100  </span></a>                <span class="s0">val </span>state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
+<a name="l101"><span class="ln">101  </span></a>                <span class="s0">when </span>(state) {
+<a name="l102"><span class="ln">102  </span></a>                    BluetoothAdapter.STATE_ON -&gt; {
+<a name="l103"><span class="ln">103  </span></a>                        <span class="s3">// El Bluetooth está encendido</span>
+<a name="l104"><span class="ln">104  </span></a>                        bluetoothBtn()
+<a name="l105"><span class="ln">105  </span></a>                    }
+<a name="l106"><span class="ln">106  </span></a>
+<a name="l107"><span class="ln">107  </span></a>                    BluetoothAdapter.STATE_OFF -&gt; {
+<a name="l108"><span class="ln">108  </span></a>                        <span class="s3">// El Bluetooth está apagado</span>
+<a name="l109"><span class="ln">109  </span></a>                        bluetoothBtn()
+<a name="l110"><span class="ln">110  </span></a>                    }
+<a name="l111"><span class="ln">111  </span></a>                }
+<a name="l112"><span class="ln">112  </span></a>            }
+<a name="l113"><span class="ln">113  </span></a>        }
+<a name="l114"><span class="ln">114  </span></a>    }
+<a name="l115"><span class="ln">115  </span></a>
+<a name="l116"><span class="ln">116  </span></a>    override <span class="s0">fun </span>onResume() {
+<a name="l117"><span class="ln">117  </span></a>        <span class="s0">super</span>.onResume()
+<a name="l118"><span class="ln">118  </span></a>        <span class="s0">val </span>filter = IntentFilter(BLUETOOTH_STATE_CHANGED_ACTION)
+<a name="l119"><span class="ln">119  </span></a>        registerReceiver(bluetoothStateReceiver, filter)
+<a name="l120"><span class="ln">120  </span></a>    }
+<a name="l121"><span class="ln">121  </span></a>
+<a name="l122"><span class="ln">122  </span></a>    private <span class="s0">fun </span>checkBluetoothPermissions() {
+<a name="l123"><span class="ln">123  </span></a>        <span class="s0">if </span>(ContextCompat.checkSelfPermission(
+<a name="l124"><span class="ln">124  </span></a>                <span class="s0">this</span>,
+<a name="l125"><span class="ln">125  </span></a>                Manifest.permission.BLUETOOTH_ADMIN
+<a name="l126"><span class="ln">126  </span></a>            ) != PackageManager.PERMISSION_GRANTED
+<a name="l127"><span class="ln">127  </span></a>        ) {
+<a name="l128"><span class="ln">128  </span></a>            <span class="s3">// Permisos de Bluetooth no concedidos, solicita el permiso</span>
+<a name="l129"><span class="ln">129  </span></a>            ActivityCompat.requestPermissions(
+<a name="l130"><span class="ln">130  </span></a>                <span class="s0">this</span>,
+<a name="l131"><span class="ln">131  </span></a>                arrayOf(Manifest.permission.BLUETOOTH_ADMIN),
+<a name="l132"><span class="ln">132  </span></a>                REQUEST_BLUETOOTH_PERMISSION
+<a name="l133"><span class="ln">133  </span></a>            )
+<a name="l134"><span class="ln">134  </span></a>        }
+<a name="l135"><span class="ln">135  </span></a>    }
+<a name="l136"><span class="ln">136  </span></a>
+<a name="l137"><span class="ln">137  </span></a>    private <span class="s0">fun </span>enableBluetooth() {
+<a name="l138"><span class="ln">138  </span></a>        <span class="s3">// El bluetooth esta apagado</span>
+<a name="l139"><span class="ln">139  </span></a>        <span class="s0">if </span>(!isBluetoothEnable()) {
+<a name="l140"><span class="ln">140  </span></a>            <span class="s0">val </span>enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+<a name="l141"><span class="ln">141  </span></a>            <span class="s0">if </span>(ActivityCompat.checkSelfPermission(
+<a name="l142"><span class="ln">142  </span></a>                    <span class="s0">this</span>,
+<a name="l143"><span class="ln">143  </span></a>                    Manifest.permission.BLUETOOTH_CONNECT
+<a name="l144"><span class="ln">144  </span></a>                ) != PackageManager.PERMISSION_GRANTED
+<a name="l145"><span class="ln">145  </span></a>            ) {
+<a name="l146"><span class="ln">146  </span></a>                ActivityCompat.requestPermissions(
+<a name="l147"><span class="ln">147  </span></a>                    <span class="s0">this</span>,
+<a name="l148"><span class="ln">148  </span></a>                    arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+<a name="l149"><span class="ln">149  </span></a>                    REQUEST_BLUETOOTH_PERMISSION
+<a name="l150"><span class="ln">150  </span></a>                )
+<a name="l151"><span class="ln">151  </span></a>            }
+<a name="l152"><span class="ln">152  </span></a>            bluetoothBtn()
+<a name="l153"><span class="ln">153  </span></a>            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH)
+<a name="l154"><span class="ln">154  </span></a>        }
+<a name="l155"><span class="ln">155  </span></a>    }
+<a name="l156"><span class="ln">156  </span></a>
+<a name="l157"><span class="ln">157  </span></a>    override <span class="s0">fun </span>onRequestPermissionsResult(
+<a name="l158"><span class="ln">158  </span></a>        requestCode: Int,
+<a name="l159"><span class="ln">159  </span></a>        permissions: Array&lt;out String&gt;,
+<a name="l160"><span class="ln">160  </span></a>        grantResults: IntArray
+<a name="l161"><span class="ln">161  </span></a>    ) {
+<a name="l162"><span class="ln">162  </span></a>        <span class="s0">super</span>.onRequestPermissionsResult(requestCode, permissions, grantResults)
+<a name="l163"><span class="ln">163  </span></a>        <span class="s0">if </span>(requestCode == REQUEST_BLUETOOTH_PERMISSION) {
+<a name="l164"><span class="ln">164  </span></a>            <span class="s0">val </span>bluetoothPermiso: Boolean
+<a name="l165"><span class="ln">165  </span></a>            <span class="s0">if </span>(grantResults.isNotEmpty() &amp;&amp; grantResults[<span class="s4">0</span>] == PackageManager.PERMISSION_GRANTED) {
+<a name="l166"><span class="ln">166  </span></a>                bluetoothPermiso = <span class="s0">true</span>
+<a name="l167"><span class="ln">167  </span></a>            } <span class="s0">else </span>{
+<a name="l168"><span class="ln">168  </span></a>                <span class="s3">// Permiso de Bluetooth denegado, toma alguna acción si es necesario</span>
+<a name="l169"><span class="ln">169  </span></a>                bluetoothPermiso = <span class="s0">false</span>
+<a name="l170"><span class="ln">170  </span></a>            }
+<a name="l171"><span class="ln">171  </span></a>        }
+<a name="l172"><span class="ln">172  </span></a>    }
+<a name="l173"><span class="ln">173  </span></a>
+<a name="l174"><span class="ln">174  </span></a>    <span class="s0">fun </span>checkConnectionStatus(): Boolean {
+<a name="l175"><span class="ln">175  </span></a>        <span class="s0">if </span>(ActivityCompat.checkSelfPermission(
+<a name="l176"><span class="ln">176  </span></a>                <span class="s0">this</span>,
+<a name="l177"><span class="ln">177  </span></a>                Manifest.permission.BLUETOOTH_CONNECT
+<a name="l178"><span class="ln">178  </span></a>            ) != PackageManager.PERMISSION_GRANTED
+<a name="l179"><span class="ln">179  </span></a>        ) {
+<a name="l180"><span class="ln">180  </span></a>            ActivityCompat.requestPermissions(
+<a name="l181"><span class="ln">181  </span></a>                <span class="s0">this</span>,
+<a name="l182"><span class="ln">182  </span></a>                arrayOf(Manifest.permission.BLUETOOTH_CONNECT),
+<a name="l183"><span class="ln">183  </span></a>                REQUEST_BLUETOOTH_PERMISSION
+<a name="l184"><span class="ln">184  </span></a>            )
+<a name="l185"><span class="ln">185  </span></a>        }
+<a name="l186"><span class="ln">186  </span></a>        <span class="s0">val </span>device = adapter?.getRemoteDevice(targetDeviceAddress) ?: <span class="s0">return false</span>
+<a name="l187"><span class="ln">187  </span></a>        bluetoothGatt = device.connectGatt(<span class="s0">this</span>, <span class="s0">false</span>, gattCallback)
+<a name="l188"><span class="ln">188  </span></a>        <span class="s0">return true</span>
+<a name="l189"><span class="ln">189  </span></a>    }
+<a name="l190"><span class="ln">190  </span></a>
+<a name="l191"><span class="ln">191  </span></a>    private <span class="s0">val </span>gattCallback = <span class="s0">object </span>: BluetoothGattCallback() {
+<a name="l192"><span class="ln">192  </span></a>        override <span class="s0">fun </span>onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+<a name="l193"><span class="ln">193  </span></a>            <span class="s0">super</span>.onConnectionStateChange(gatt, status, newState)
+<a name="l194"><span class="ln">194  </span></a>
+<a name="l195"><span class="ln">195  </span></a>            <span class="s0">if </span>(newState == BluetoothProfile.STATE_CONNECTED) {
+<a name="l196"><span class="ln">196  </span></a>                <span class="s3">//Dispositivo conectado</span>
+<a name="l197"><span class="ln">197  </span></a>                isConnected = <span class="s0">true</span>
+<a name="l198"><span class="ln">198  </span></a>                informationUpdate()
+<a name="l199"><span class="ln">199  </span></a>            } <span class="s0">else if </span>(newState == BluetoothProfile.STATE_DISCONNECTED) {
+<a name="l200"><span class="ln">200  </span></a>                isConnected = <span class="s0">false</span>
+<a name="l201"><span class="ln">201  </span></a>                informationUpdate()
+<a name="l202"><span class="ln">202  </span></a>                <span class="s3">// Dispositivo desconectado</span>
+<a name="l203"><span class="ln">203  </span></a>            }
+<a name="l204"><span class="ln">204  </span></a>        }
+<a name="l205"><span class="ln">205  </span></a>    }
+<a name="l206"><span class="ln">206  </span></a>
+<a name="l207"><span class="ln">207  </span></a>    private <span class="s0">val </span>connectionReceiver = <span class="s0">object </span>: BroadcastReceiver() {
+<a name="l208"><span class="ln">208  </span></a>        override <span class="s0">fun </span>onReceive(context: Context?, intent: Intent?) {
+<a name="l209"><span class="ln">209  </span></a>            <span class="s0">val </span>action = intent?.action
+<a name="l210"><span class="ln">210  </span></a>            <span class="s0">val </span>device = intent?.getParcelableExtra&lt;BluetoothDevice&gt;(BluetoothDevice.EXTRA_DEVICE)
+<a name="l211"><span class="ln">211  </span></a>
+<a name="l212"><span class="ln">212  </span></a>            <span class="s0">if </span>(BluetoothDevice.ACTION_ACL_CONNECTED == action) {
+<a name="l213"><span class="ln">213  </span></a>                <span class="s0">if </span>(device?.address == targetDeviceAddress) {
+<a name="l214"><span class="ln">214  </span></a>                    isConnected = <span class="s0">true</span>
+<a name="l215"><span class="ln">215  </span></a>                    informationUpdate()
+<a name="l216"><span class="ln">216  </span></a>                }
+<a name="l217"><span class="ln">217  </span></a>            } <span class="s0">else if </span>(BluetoothDevice.ACTION_ACL_DISCONNECTED == action) {
+<a name="l218"><span class="ln">218  </span></a>                <span class="s0">if </span>(device?.address == targetDeviceAddress) {
+<a name="l219"><span class="ln">219  </span></a>                    isConnected = <span class="s0">false</span>
+<a name="l220"><span class="ln">220  </span></a>                    informationUpdate()
+<a name="l221"><span class="ln">221  </span></a>                }
+<a name="l222"><span class="ln">222  </span></a>            }
+<a name="l223"><span class="ln">223  </span></a>        }
+<a name="l224"><span class="ln">224  </span></a>    }
+<a name="l225"><span class="ln">225  </span></a>
+<a name="l226"><span class="ln">226  </span></a>    @SuppressLint(<span class="s2">&quot;MissingPermission&quot;</span>)
+<a name="l227"><span class="ln">227  </span></a>    private <span class="s0">fun </span>informationUpdate() {
+<a name="l228"><span class="ln">228  </span></a>        <span class="s0">val </span>device = bluetoothGatt?.device
+<a name="l229"><span class="ln">229  </span></a>        <span class="s0">when </span>{
+<a name="l230"><span class="ln">230  </span></a>            isConnected -&gt; {
+<a name="l231"><span class="ln">231  </span></a>                binding.tvStatusDevice.text = <span class="s2">&quot;Conectado&quot;</span>
+<a name="l232"><span class="ln">232  </span></a>                binding.tvNameDevice.visibility = VISIBLE
+<a name="l233"><span class="ln">233  </span></a>                binding.tvAddressDevice.visibility = VISIBLE
+<a name="l234"><span class="ln">234  </span></a>                device?.let {
+<a name="l235"><span class="ln">235  </span></a>                    <span class="s0">val </span>deviceName = it.getName()
+<a name="l236"><span class="ln">236  </span></a>                    binding.tvNameDevice.text = deviceName ?: <span class="s2">&quot;Desconocido&quot;</span>
+<a name="l237"><span class="ln">237  </span></a>                    binding.tvAddressDevice.text = it.address
+<a name="l238"><span class="ln">238  </span></a>                }
+<a name="l239"><span class="ln">239  </span></a>            }
+<a name="l240"><span class="ln">240  </span></a>            <span class="s0">else </span>-&gt; {
+<a name="l241"><span class="ln">241  </span></a>                binding.tvStatusDevice.text = <span class="s2">&quot;No conectado&quot;</span>
+<a name="l242"><span class="ln">242  </span></a>                binding.tvNameDevice.visibility = GONE
+<a name="l243"><span class="ln">243  </span></a>                binding.tvAddressDevice.visibility = GONE
+<a name="l244"><span class="ln">244  </span></a>            }
+<a name="l245"><span class="ln">245  </span></a>        }
+<a name="l246"><span class="ln">246  </span></a>    }
+<a name="l247"><span class="ln">247  </span></a>
+<a name="l248"><span class="ln">248  </span></a>    private <span class="s0">fun </span>registerConnectionReceiver() {
+<a name="l249"><span class="ln">249  </span></a>        <span class="s0">val </span>filter = IntentFilter()
+<a name="l250"><span class="ln">250  </span></a>        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+<a name="l251"><span class="ln">251  </span></a>        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+<a name="l252"><span class="ln">252  </span></a>        registerReceiver(connectionReceiver, filter)
+<a name="l253"><span class="ln">253  </span></a>        informationUpdate()
+<a name="l254"><span class="ln">254  </span></a>    }
+<a name="l255"><span class="ln">255  </span></a>
+<a name="l256"><span class="ln">256  </span></a>    override <span class="s0">fun </span>onDestroy() {
+<a name="l257"><span class="ln">257  </span></a>        <span class="s0">super</span>.onDestroy()
+<a name="l258"><span class="ln">258  </span></a>        unregisterReceiver(connectionReceiver)
+<a name="l259"><span class="ln">259  </span></a>    }
+<a name="l260"><span class="ln">260  </span></a>
+<a name="l261"><span class="ln">261  </span></a>    companion <span class="s0">object </span>{
+<a name="l262"><span class="ln">262  </span></a>        const <span class="s0">val </span>BLUETOOTH_STATE_CHANGED_ACTION = <span class="s2">&quot;android.bluetooth.adapter.action.STATE_CHANGED&quot;</span>
+<a name="l263"><span class="ln">263  </span></a>        const <span class="s0">val </span>REQUEST_BLUETOOTH_PERMISSION = <span class="s4">1</span>
+<a name="l264"><span class="ln">264  </span></a>        private const <span class="s0">val </span>REQUEST_ENABLE_BLUETOOTH = <span class="s4">2</span>
+<a name="l265"><span class="ln">265  </span></a>    }
+<a name="l266"><span class="ln">266  </span></a>}</pre>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/morado5"
+    tools:context=".EmailActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp">
+
+        <ImageView
+            android:id="@+id/back_btn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/baseline_keyboard_backspace_24" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_email"
+            android:text="Correo electrónico"
+            android:layout_below="@id/back_btn"
+            android:textColor="@color/white"
+            android:textSize="27sp"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_infoEmail"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/text_email"
+            android:text="Su correo electrónico actual es:"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins"
+            android:visibility="visible"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_emailActual"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/text_infoEmail"
+            android:text="usuario@correo.com"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins"
+            android:visibility="visible"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_newEmail"
+        android:layout_width="380dp"
+        android:layout_height="360dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/white_background_card"
+        app:layout_constraintTop_toBottomOf="@id/layout_email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_newEmail"
+            android:text="Correo electrónico nuevo"
+            android:textColor="@color/grisfill"
+            android:textSize="19sp"
+            android:fontFamily="@font/poppins"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="4dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@id/edittxt_newEmail"/>
+
+        <EditText
+            android:id="@+id/edittxt_newEmail"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edittext_border"
+            android:drawableLeft="@drawable/baseline_email_24"
+            android:hint=" usuario@correo.com"
+            android:fontFamily="@font/poppins"
+            android:textColorHint="@color/gris"
+            android:padding="8dp"
+            android:paddingStart="8dp"
+            android:textColor="@color/black"
+            android:layout_below="@id/text_newEmail"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_confirmNewEmail"
+            android:text="Confirmar correo electrónico nuevo"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/grisfill"
+            android:textSize="19sp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="4dp"
+            android:layout_below="@id/edittxt_newEmail"
+            android:layout_alignStart="@id/edittxt_confirmNewEmail"/>
+
+        <EditText
+            android:id="@+id/edittxt_confirmNewEmail"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edittext_border"
+            android:drawableLeft="@drawable/baseline_email_24"
+            android:hint=" nuevo_usuario@correo.com"
+            android:paddingStart="8dp"
+            android:textColorHint="@color/gris"
+            android:inputType="textEmailAddress"
+            android:padding="8dp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/black"
+            android:layout_below="@id/text_confirmNewEmail"
+            android:layout_centerHorizontal="true">
+
+        </EditText>
+
+        <Button
+            android:id="@+id/changeEmail_button"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/button_border"
+            android:text="Cambiar correo"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_below="@id/edittxt_confirmNewEmail"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="380dp"
+        android:layout_height="195dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/layout_success"
+        android:background="@drawable/white_background_card"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/successMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/morado5"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="¡Su correo electrónico se ha cambiado con éxito!"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp">
+        </TextView>
+
+        <ImageView
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:src="@drawable/baseline_check_circle_outline_24"
+            android:layout_alignParentBottom="true"
+            android:layout_alignBottom="@id/successMessage"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
+        </ImageView>
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

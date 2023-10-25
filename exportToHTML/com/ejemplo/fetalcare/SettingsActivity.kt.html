@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>SettingsActivity.kt</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #9b2393; font-weight: bold;}
+.s1 { color: #000000;}
+.s2 { color: #c41a16;}
+.s3 { color: #5d6c79;}
+.s4 { color: #aa0d91; font-weight: bold;}
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+SettingsActivity.kt</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">package </span>com.ejemplo.fetalcare
+<a name="l2"><span class="ln">2    </span></a>
+<a name="l3"><span class="ln">3    </span></a>import android.content.Intent
+<a name="l4"><span class="ln">4    </span></a>import androidx.appcompat.app.AppCompatActivity
+<a name="l5"><span class="ln">5    </span></a>import android.os.Bundle
+<a name="l6"><span class="ln">6    </span></a>import android.util.Log
+<a name="l7"><span class="ln">7    </span></a>import com.ejemplo.fetalcare.databinding.ActivitySettingsBinding
+<a name="l8"><span class="ln">8    </span></a>import com.google.firebase.auth.FirebaseAuth
+<a name="l9"><span class="ln">9    </span></a>import com.google.firebase.auth.ktx.auth
+<a name="l10"><span class="ln">10   </span></a>import com.google.firebase.database.DataSnapshot
+<a name="l11"><span class="ln">11   </span></a>import com.google.firebase.database.DatabaseError
+<a name="l12"><span class="ln">12   </span></a>import com.google.firebase.database.DatabaseReference
+<a name="l13"><span class="ln">13   </span></a>import com.google.firebase.database.FirebaseDatabase
+<a name="l14"><span class="ln">14   </span></a>import com.google.firebase.database.ValueEventListener
+<a name="l15"><span class="ln">15   </span></a>import com.google.firebase.ktx.Firebase
+<a name="l16"><span class="ln">16   </span></a>
+<a name="l17"><span class="ln">17   </span></a><span class="s0">class </span>SettingsActivity : AppCompatActivity() {
+<a name="l18"><span class="ln">18   </span></a>
+<a name="l19"><span class="ln">19   </span></a>    lateinit <span class="s0">var </span>binding: ActivitySettingsBinding
+<a name="l20"><span class="ln">20   </span></a>    private lateinit <span class="s0">var </span>firebaseAuth: FirebaseAuth
+<a name="l21"><span class="ln">21   </span></a>    private lateinit <span class="s0">var </span>database: FirebaseDatabase
+<a name="l22"><span class="ln">22   </span></a>    private lateinit <span class="s0">var </span>reference: DatabaseReference
+<a name="l23"><span class="ln">23   </span></a>    override <span class="s0">fun </span>onCreate(savedInstanceState: Bundle?) {
+<a name="l24"><span class="ln">24   </span></a>        <span class="s0">super</span>.onCreate(savedInstanceState)
+<a name="l25"><span class="ln">25   </span></a>
+<a name="l26"><span class="ln">26   </span></a>        binding = ActivitySettingsBinding.inflate(layoutInflater)
+<a name="l27"><span class="ln">27   </span></a>        setContentView(binding.root)
+<a name="l28"><span class="ln">28   </span></a>
+<a name="l29"><span class="ln">29   </span></a>        firebaseAuth = FirebaseAuth.getInstance()
+<a name="l30"><span class="ln">30   </span></a>        database = FirebaseDatabase.getInstance()
+<a name="l31"><span class="ln">31   </span></a>        reference = database.getReference(<span class="s2">&quot;users&quot;</span>)
+<a name="l32"><span class="ln">32   </span></a>
+<a name="l33"><span class="ln">33   </span></a>        <span class="s3">//Imagen de perfil</span>
+<a name="l34"><span class="ln">34   </span></a>        binding.profileImg.setOnClickListener {
+<a name="l35"><span class="ln">35   </span></a>
+<a name="l36"><span class="ln">36   </span></a>        }
+<a name="l37"><span class="ln">37   </span></a>
+<a name="l38"><span class="ln">38   </span></a>        <span class="s3">//Contrasena</span>
+<a name="l39"><span class="ln">39   </span></a>        binding.password.setOnClickListener {
+<a name="l40"><span class="ln">40   </span></a>            <span class="s0">val </span>passwordIntent = Intent(<span class="s0">this</span>, PasswordActivity::<span class="s0">class</span>.java)
+<a name="l41"><span class="ln">41   </span></a>            startActivity(passwordIntent)
+<a name="l42"><span class="ln">42   </span></a>
+<a name="l43"><span class="ln">43   </span></a>        }
+<a name="l44"><span class="ln">44   </span></a>
+<a name="l45"><span class="ln">45   </span></a>        <span class="s3">//Email</span>
+<a name="l46"><span class="ln">46   </span></a>        binding.email.setOnClickListener {
+<a name="l47"><span class="ln">47   </span></a>            <span class="s0">val </span>emailIntent = Intent(<span class="s0">this</span>, EmailActivity::<span class="s0">class</span>.java)
+<a name="l48"><span class="ln">48   </span></a>            startActivity(emailIntent)
+<a name="l49"><span class="ln">49   </span></a>
+<a name="l50"><span class="ln">50   </span></a>        }
+<a name="l51"><span class="ln">51   </span></a>
+<a name="l52"><span class="ln">52   </span></a>        <span class="s3">//Cierre de sesion</span>
+<a name="l53"><span class="ln">53   </span></a>        binding.logout.setOnClickListener {
+<a name="l54"><span class="ln">54   </span></a>            firebaseAuth = Firebase.auth
+<a name="l55"><span class="ln">55   </span></a>            <span class="s0">val </span>currentUser = firebaseAuth.currentUser
+<a name="l56"><span class="ln">56   </span></a>            <span class="s0">if </span>(currentUser != <span class="s0">null</span>) {
+<a name="l57"><span class="ln">57   </span></a>                firebaseAuth.signOut()
+<a name="l58"><span class="ln">58   </span></a>                <span class="s0">val </span>loginIntent = Intent(<span class="s0">this</span>, LoginActivity::<span class="s0">class</span>.java)
+<a name="l59"><span class="ln">59   </span></a>                loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+<a name="l60"><span class="ln">60   </span></a>                startActivity(loginIntent)
+<a name="l61"><span class="ln">61   </span></a>                finish()
+<a name="l62"><span class="ln">62   </span></a>            }
+<a name="l63"><span class="ln">63   </span></a>        }
+<a name="l64"><span class="ln">64   </span></a>        <span class="s3">//Nombre del usuario</span>
+<a name="l65"><span class="ln">65   </span></a>        <span class="s0">val </span>user = firebaseAuth.currentUser
+<a name="l66"><span class="ln">66   </span></a>        <span class="s0">val </span>uid = user?.uid
+<a name="l67"><span class="ln">67   </span></a>
+<a name="l68"><span class="ln">68   </span></a>        reference.addListenerForSingleValueEvent(<span class="s0">object </span>: ValueEventListener {
+<a name="l69"><span class="ln">69   </span></a>            override <span class="s0">fun </span>onDataChange(snapshot: DataSnapshot) {
+<a name="l70"><span class="ln">70   </span></a>                <span class="s0">val </span>userSnapshot = snapshot.child(uid!!)
+<a name="l71"><span class="ln">71   </span></a>                <span class="s0">val </span>helperClass = userSnapshot.getValue(HelperClass::<span class="s0">class</span>.java)
+<a name="l72"><span class="ln">72   </span></a>                <span class="s0">if </span>(helperClass != <span class="s0">null</span>) {
+<a name="l73"><span class="ln">73   </span></a>                    binding.titleName.text = helperClass.name
+<a name="l74"><span class="ln">74   </span></a>                    binding.titleEmail.text = helperClass.email
+<a name="l75"><span class="ln">75   </span></a>                }
+<a name="l76"><span class="ln">76   </span></a>            }
+<a name="l77"><span class="ln">77   </span></a>            override <span class="s0">fun </span>onCancelled(error: DatabaseError) {
+<a name="l78"><span class="ln">78   </span></a>                Log.e(<span class="s2">&quot;Firebase&quot;</span>, <span class="s2">&quot;Error al obtener el nombre del usuario: </span><span class="s4">${</span>error.message<span class="s4">}</span><span class="s2">&quot;</span>)
+<a name="l79"><span class="ln">79   </span></a>            }
+<a name="l80"><span class="ln">80   </span></a>        })
+<a name="l81"><span class="ln">81   </span></a>
+<a name="l82"><span class="ln">82   </span></a>        <span class="s3">//Barra de navegacion en la App</span>
+<a name="l83"><span class="ln">83   </span></a>        binding.bottomNavigationView.setOnItemReselectedListener { item -&gt;
+<a name="l84"><span class="ln">84   </span></a>            <span class="s0">val </span>historyIntent = Intent(<span class="s0">this</span>, HistoryActivity::<span class="s0">class</span>.java)
+<a name="l85"><span class="ln">85   </span></a>            <span class="s0">val </span>settingsIntent = Intent(<span class="s0">this</span>, SettingsActivity::<span class="s0">class</span>.java)
+<a name="l86"><span class="ln">86   </span></a>            <span class="s0">val </span>homeIntent = Intent(<span class="s0">this</span>, MainActivity::<span class="s0">class</span>.java)
+<a name="l87"><span class="ln">87   </span></a>            <span class="s0">when </span>(item.itemId) {
+<a name="l88"><span class="ln">88   </span></a>                R.id.bottom_home -&gt; {
+<a name="l89"><span class="ln">89   </span></a>                    startActivity(homeIntent)
+<a name="l90"><span class="ln">90   </span></a>                    finish()
+<a name="l91"><span class="ln">91   </span></a>                }
+<a name="l92"><span class="ln">92   </span></a>
+<a name="l93"><span class="ln">93   </span></a>                R.id.bottom_history -&gt; {
+<a name="l94"><span class="ln">94   </span></a>                    startActivity(historyIntent)
+<a name="l95"><span class="ln">95   </span></a>                    finish()
+<a name="l96"><span class="ln">96   </span></a>                }
+<a name="l97"><span class="ln">97   </span></a>
+<a name="l98"><span class="ln">98   </span></a>                R.id.bottom_settings -&gt; {
+<a name="l99"><span class="ln">99   </span></a>                    startActivity(settingsIntent)
+<a name="l100"><span class="ln">100  </span></a>                    finish()
+<a name="l101"><span class="ln">101  </span></a>                }
+<a name="l102"><span class="ln">102  </span></a>            }
+<a name="l103"><span class="ln">103  </span></a>
+<a name="l104"><span class="ln">104  </span></a>        }
+<a name="l105"><span class="ln">105  </span></a>    }
+<a name="l106"><span class="ln">106  </span></a>}</pre>
+</body>
+</html>
